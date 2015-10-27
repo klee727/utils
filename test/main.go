@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"time"
 
 	"github.com/op/go-logging"
-	"github.com/yangzhao28/rotationfile"
+	"github.com/yangzhao28/utils/rotationfile"
 )
 
 var log = logging.MustGetLogger("example")
+var log2 = logging.MustGetLogger("example2")
 
 var format = logging.MustStringFormatter(
 	// "[%{color}%{time:15:04:05.000} %{shortfunc} %{level:.4s} %{id:03x}%{color:reset}] %{message}",
@@ -17,20 +17,14 @@ var format = logging.MustStringFormatter(
 )
 
 func main() {
-	fmt.Println("service, online.")
 	file := &rotationfile.Rotator{}
-	file.Create("log/baselog.log", rotationfile.MinutelyRotation)
-	fmt.Println("file, created:", file.GetCurrentFileName(), ".")
-
 	fileBackend := logging.NewLogBackend(file, "", 0)
-	consoleBackend := logging.NewLogBackend(os.Stderr, "", 0)
-
 	fileBackendFormatter := logging.NewBackendFormatter(fileBackend, format)
-	consoleBackendFormatter := logging.NewBackendFormatter(consoleBackend, format)
-
 	fileBackendLeveled := logging.AddModuleLevel(fileBackendFormatter)
 	fileBackendLeveled.SetLevel(logging.ERROR, "")
 
+	consoleBackend := logging.NewLogBackend(os.Stderr, "", 0)
+	consoleBackendFormatter := logging.NewBackendFormatter(consoleBackend, format)
 	consoleBackendLeveled := logging.AddModuleLevel(consoleBackendFormatter)
 	consoleBackendLeveled.SetLevel(logging.ERROR, "")
 
@@ -43,7 +37,6 @@ func main() {
 		log.Warning("warning")
 		log.Error("err")
 		log.Critical("crit")
-
 		time.Sleep(time.Second)
 	}
 }

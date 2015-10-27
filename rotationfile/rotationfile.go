@@ -1,7 +1,6 @@
 package rotationfile
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -50,7 +49,7 @@ func (rotator *Rotator) Create(name string, rotationByTime int) {
 	if strings.LastIndexAny(name, "\\/") != -1 {
 		os.MkdirAll(name[0:strings.LastIndexAny(name, "\\/")], 0766)
 	}
-	fmt.Println("name:", name)
+	// fmt.Println("name:", name)
 	rotator.rotationByTime = rotationByTime
 	now := time.Now()
 	rotator.switchFile(now)
@@ -60,7 +59,7 @@ func (rotator *Rotator) switchFile(now time.Time) error {
 	if rotator.rotationByTime != NoRotation {
 		logFileName := rotator.baseFileName
 		logFileName += "." + now.Format(GetTimeFormat(rotator.rotationByTime))
-		fmt.Println("next log-name will be", logFileName, ".")
+		// fmt.Println("next log-name will be", logFileName, ".")
 		switch rotator.rotationByTime {
 		default:
 			break
@@ -71,14 +70,14 @@ func (rotator *Rotator) switchFile(now time.Time) error {
 		case DailyRotation:
 			rotator.nextRotationTime = now.Add(24 * time.Hour).Add(-time.Duration(now.Hour()*3600+now.Minute()*60+now.Second()) * time.Second).Unix()
 		}
-		fmt.Println("next rotation time-point will be", rotator.nextRotationTime, " vs now ", now.Unix(), ".")
+		// fmt.Println("next rotation time-point will be", rotator.nextRotationTime, " vs now ", now.Unix(), ".")
 		logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 		if err == nil {
 			rotator.currentFileName = logFileName
 			rotator.internalFile = logFile
-			fmt.Println("file swapped.")
+			// fmt.Println("file swapped.")
 		} else {
-			fmt.Println(err.Error())
+			// fmt.Println(err.Error())
 		}
 		return err
 	}
