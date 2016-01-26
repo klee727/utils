@@ -2,7 +2,7 @@ package rotationfile
 
 import (
 	// "fmt"
-	"fmt"
+
 	"os"
 	"strings"
 	"sync"
@@ -45,7 +45,6 @@ func GetTimeFormat(rotationByTime int) string {
 }
 
 func (this *Rotator) createSymLink(currentName string) error {
-	fmt.Println("enter symlink")
 	linkName := this.baseFileName
 	if info, err := os.Lstat(linkName); !os.IsNotExist(err) {
 		if info != nil && (info.Mode()&os.ModeSymlink == os.ModeSymlink) {
@@ -57,8 +56,8 @@ func (this *Rotator) createSymLink(currentName string) error {
 			return nil
 		}
 	}
-	if info, err := os.Lstat(currentName); err != nil {
-		if !info.Mode().IsRegular() {
+	if info, err := os.Lstat(currentName); err == nil {
+		if info.Mode().IsRegular() {
 			os.Symlink(currentName, linkName)
 		}
 	}
